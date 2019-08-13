@@ -103,7 +103,7 @@ class HomeSpider(scrapy.Spider):
 	options.add_argument("--no-sandbox") 		
 	caps = options.to_capabilities()
 	self.driver = webdriver.Chrome('./chromedriver', desired_capabilities=caps)
-	self.driver.get('https://www.airbnb.ca/s/Montreal--QC/homes?refinement_paths%5B%5D=%2Fhomes&place_id=ChIJDbdkHFQayUwR7-8fITgxTmU&query=Montreal%2C%20QC&search_type=filter_change&s_tag=KhBNmEQ3&checkin=2019-08-15&checkout=2019-08-22&adults=1&room_types%5B%5D=Entire%20home%2Fapt')
+	self.driver.get(self.url)
         self.logger.info('started request to')
 
     def parse(self, response):

@@ -19,4 +19,6 @@ class AirbnbScrapeItem(scrapy.Item):
     price = scrapy.Field()
     is_new = scrapy.Field()
     is_superhost = scrapy.Field()
+    image = scrapy.Field()
+    detail_page = scrapy.Field()
     

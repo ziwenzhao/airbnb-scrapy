@@ -132,14 +132,16 @@ class HomeSpider(scrapy.Spider):
                 self.logger.debug('scrape a home item ' + str(home_item))
                 yield home_item
             self.logger.info('finish scraping page ' + str(page_number))
+            if page_number == int(self.max_page_number):
+                break
             try:
                 self.driver.get(self.driver.find_element_by_xpath('//li[not(@data-id)][@class="_r4n1gzb"]/a').get_attribute('href'))
                 self.logger.info('navigated to next page')
                 page_number += 1
             except Exception as e:
-                self.logger.debug('check next button')
-                sel = Selector(text=self.driver.page_source)
-                self.logger.debug(sel.xpath('//ul[@class="_11hau3k"]/li[last()]').get())
+##                self.logger.debug('check next button')
+##                sel = Selector(text=self.driver.page_source)
+##                self.logger.debug(sel.xpath('//ul[@class="_11hau3k"]/li[last()]').get())
                 self.logger.error('navigate to next page fail' + str(e))
                 break
     	

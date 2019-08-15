@@ -10,7 +10,6 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
 from airbnb_scrape.items import AirbnbScrapeItem
 from selenium.webdriver.support import expected_conditions as EC
-from contextlib import contextmanager
 
 class HomeSpider(scrapy.Spider):
     name = 'home'
@@ -77,8 +76,6 @@ class HomeSpider(scrapy.Spider):
 ##        return images
 
 
-
-
     def close_driver(self):
 	self.driver.close()
 	self.logger.info('webdriver closed')
@@ -104,7 +101,8 @@ class HomeSpider(scrapy.Spider):
 	caps = options.to_capabilities()
 	self.driver = webdriver.Chrome('./chromedriver', desired_capabilities=caps)
 	self.driver.get(self.url)
-        self.logger.info('started request to')
+        self.logger.info('started request to %s', self.url)
+        
 
     def parse(self, response):
         page_number = 1
@@ -112,9 +110,12 @@ class HomeSpider(scrapy.Spider):
     	self.close_cookie_notice()
            
         while True:
+            ## Load all home selectors
             self.logger.info('start scraping page ' + str(page_number))
             self.scrapy_selector = Selector(text = self.driver.page_source)
             home_selectors = self.scrapy_selector.xpath('//div[@class="_fhph4u"]/div[@class="_8ssblpx"]')
+
+            ## Scrape all home items in the current page
             for index, home_selector in enumerate(home_selectors):
                 home_type = home_selector.xpath('.//span[@class="_1xxanas2"]/span/text()').get()
                 description = home_selector.xpath('.//div[@class="_1dss1omb"]/text()').get()
@@ -132,11 +133,16 @@ class HomeSpider(scrapy.Spider):
                 self.logger.debug('scrape a home item ' + str(home_item))
                 yield home_item
             self.logger.info('finish scraping page ' + str(page_number))
+
+            ## if reach max page stop scraping
             if page_number == int(self.max_page_number):
                 break
+
+            ## navigate to next apge
             try:
                 self.driver.get(self.driver.find_element_by_xpath('//li[not(@data-id)][@class="_r4n1gzb"]/a').get_attribute('href'))
                 self.logger.info('navigated to next page')
+                sleep(1) # Wait until page is fully loaded
                 page_number += 1
             except Exception as e:
 ##                self.logger.debug('check next button')

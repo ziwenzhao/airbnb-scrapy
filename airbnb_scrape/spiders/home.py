@@ -16,6 +16,7 @@ class HomeSpider(scrapy.Spider):
     allowed_domains = ['www.airbnb.ca']
     start_urls = ['http://www.airbnb.ca']
 
+
     def get_rating(self, home_selector):
         rating = home_selector.xpath('.//div[@class="_tghtxy2"]/text()').get()
         if rating is not None:
@@ -108,7 +109,7 @@ class HomeSpider(scrapy.Spider):
         page_number = 1
     	self.start_request_with_selenium()
     	self.close_cookie_notice()
-           
+        
         while True:
             ## Load all home selectors
             self.logger.info('start scraping page ' + str(page_number))
@@ -148,7 +149,7 @@ class HomeSpider(scrapy.Spider):
 ##                self.logger.debug('check next button')
 ##                sel = Selector(text=self.driver.page_source)
 ##                self.logger.debug(sel.xpath('//ul[@class="_11hau3k"]/li[last()]').get())
-                self.logger.error('navigate to next page fail' + str(e))
+                self.logger.error('navigate to next page fail ' + str(e))
                 break
     	
     	self.close_driver()
